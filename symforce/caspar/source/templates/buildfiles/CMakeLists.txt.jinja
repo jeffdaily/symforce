@@ -10,12 +10,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(USE_HIP "Build with HIP for AMD GPUs" OFF)
 
 if(USE_HIP)
+  # project(... LANGUAGES ... HIP) honors -DCMAKE_HIP_ARCHITECTURES, otherwise
+  # auto-detects the host GPU and errors on a no-GPU build host.
   project(caspar_library LANGUAGES CXX HIP)
-
-  # Default to gfx90a if not specified
-  if(NOT DEFINED CMAKE_HIP_ARCHITECTURES OR CMAKE_HIP_ARCHITECTURES STREQUAL "")
-    set(CMAKE_HIP_ARCHITECTURES "gfx90a")
-  endif()
 
   find_package(hip REQUIRED)
   find_package(hipcub REQUIRED)
