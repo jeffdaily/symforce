@@ -110,8 +110,7 @@ class MatrixXi : public Eigen::Matrix<int32_t, Eigen::Dynamic, Eigen::Dynamic, E
   inline __lcm_buffer_size _decodeNoHash(const void* buf, __lcm_buffer_size offset,
                                          __lcm_buffer_size maxlen);
   constexpr static uint64_t _computeHash(const __lcm_hash_ptr*) {
-    uint64_t hash = 0xa8245e97d27287f8LL;
-    return (hash << 1) + ((hash >> 63) & 1);
+    return 0x5048bd2fa4e50ff1ULL;
   }
 };
 

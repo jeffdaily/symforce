@@ -109,8 +109,7 @@ class VectorXd : public Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::AutoAlig
   inline __lcm_buffer_size _decodeNoHash(const void* buf, __lcm_buffer_size offset,
                                          __lcm_buffer_size maxlen);
   constexpr static uint64_t _computeHash(const __lcm_hash_ptr*) {
-    uint64_t hash = 0x510645c6323fd42cLL;
-    return (hash << 1) + ((hash >> 63) & 1);
+    return 0xa20c8b8c647fa858ULL;
   }
 };
 

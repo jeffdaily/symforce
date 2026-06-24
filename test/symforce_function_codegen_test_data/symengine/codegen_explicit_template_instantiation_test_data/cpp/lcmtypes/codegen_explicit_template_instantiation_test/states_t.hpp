@@ -101,12 +101,7 @@ class states_t
             for(fp = p; fp != NULL; fp = fp->parent)
                 if(fp->v == states_t::getHash)
                     return 0;
-            const __lcm_hash_ptr cp = { p, states_t::getHash };
-
-            uint64_t hash = 0x0012345678017000LL +
-                ::eigen_lcm::Vector2d::_computeHash(&cp);
-
-            return (hash<<1) + ((hash>>63)&1);
+            return 0xf8d125e8c0876fc1ULL;
         }
 
         // Comparison operators.

@@ -116,8 +116,7 @@ class Quaterniond : public Eigen::Quaternion<double, Eigen::DontAlign> {
   inline __lcm_buffer_size _decodeNoHash(const void* buf, __lcm_buffer_size offset,
                                          __lcm_buffer_size maxlen);
   constexpr static uint64_t _computeHash(const __lcm_hash_ptr*) {
-    uint64_t hash = 0x7e535f5ac82123f2LL;
-    return (hash << 1) + ((hash >> 63) & 1);
+    return 0xfca6beb5904247e4ULL;
   }
 };
 

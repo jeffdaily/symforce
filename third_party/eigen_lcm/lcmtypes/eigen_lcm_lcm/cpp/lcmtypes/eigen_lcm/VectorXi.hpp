@@ -109,8 +109,7 @@ class VectorXi : public Eigen::Matrix<int32_t, Eigen::Dynamic, 1, Eigen::AutoAli
   inline __lcm_buffer_size _decodeNoHash(const void* buf, __lcm_buffer_size offset,
                                          __lcm_buffer_size maxlen);
   constexpr static uint64_t _computeHash(const __lcm_hash_ptr*) {
-    uint64_t hash = 0x9347b9a23a82b6c5LL;
-    return (hash << 1) + ((hash >> 63) & 1);
+    return 0x268f734475056d8bULL;
   }
 };
 

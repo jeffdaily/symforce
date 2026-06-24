@@ -111,8 +111,7 @@ class Matrix3f : public Eigen::Matrix<float, 3, 3, Eigen::DontAlign> {
   inline __lcm_buffer_size _decodeNoHash(const void* buf, __lcm_buffer_size offset,
                                          __lcm_buffer_size maxlen);
   constexpr static uint64_t _computeHash(const __lcm_hash_ptr*) {
-    uint64_t hash = 0x5c782a36eaf5245fLL;
-    return (hash << 1) + ((hash >> 63) & 1);
+    return 0xb8f0546dd5ea48beULL;
   }
 };
 

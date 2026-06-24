@@ -159,10 +159,7 @@ class outputs_1_t(object):
     @staticmethod
     def _get_hash_recursive(parents: T.List[T.Type]) -> int:
         if outputs_1_t in parents: return 0
-        newparents = parents + [outputs_1_t]
-        tmphash = (0xa7f6beb7efb65a6f+ values_vec_t._get_hash_recursive(newparents)+ values_vec_t._get_hash_recursive(newparents)+ MatrixXd._get_hash_recursive(newparents)+ Matrix4d._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
-        return tmphash
+        return 0x2a8087805634c5b0
 
     _packed_fingerprint: T.Optional[bytes] = None
 

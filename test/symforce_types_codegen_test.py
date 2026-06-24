@@ -4,6 +4,8 @@
 # ----------------------------------------------------------------------------
 
 import copy
+import json
+from pathlib import Path
 
 import symforce
 
@@ -57,6 +59,7 @@ class SymforceTypesCodegenTest(TestCase):
         scalar_type: str,
         shared_types: T.Mapping[str, str],
         expected_types: T.Sequence[str],
+        extra_dep_hash_files: T.Sequence[Path] = (),
     ) -> types_package_codegen.TypesCodegenData:
         """
         Helper to test generation with less duplicated code.
@@ -72,6 +75,7 @@ class SymforceTypesCodegenTest(TestCase):
             shared_types=shared_types,
             scalar_type=scalar_type,
             output_dir=output_dir,
+            dep_hash_files=[*extra_dep_hash_files],
         )
 
         types_dict = codegen_data.types_dict
@@ -190,11 +194,26 @@ class SymforceTypesCodegenTest(TestCase):
             "external.vec_t",
         )
 
+        # These external types are never emitted, so feed skymarshal synthetic hashes. Safe only
+        # because this test checks codegen structure and never builds the generated code.
+        dummy_dir = self.make_output_dir("sf_types_codegen_dummy_hashes_")
+        dummy_hash_path = dummy_dir / "dummy_external_hashes.json"
+        dummy_hash_path.write_text(
+            json.dumps(
+                {
+                    "other_module.bar_t": "0x0000000000000001",
+                    "external.zoomba_t": "0x0000000000000002",
+                    "external.vec_t": "0x0000000000000003",
+                }
+            )
+        )
+
         self.types_codegen_helper(
             name="external",
             scalar_type="double",
             shared_types=shared_types,
             expected_types=expected_types,
+            extra_dep_hash_files=[dummy_hash_path],
         )
 
     def test_types_codegen_reuse(self) -> None:

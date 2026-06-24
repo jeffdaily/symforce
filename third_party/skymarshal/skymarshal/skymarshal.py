@@ -6,6 +6,7 @@ Parse lcm defintion files and generate bindings in different languages.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import shlex
 import sys
@@ -41,6 +42,18 @@ def parse_args(
         "--no-source-paths",
         action="store_true",
         help="Don't include the LCM source path in generated files",
+    )
+
+    parser.add_argument(
+        "--hash-deps-info",
+        nargs="*",
+        help="JSON files mapping cross-package lcmtype full names to their precomputed "
+        "recursive fingerprint hashes",
+    )
+
+    parser.add_argument(
+        "--hash-info-out",
+        help="Output path for a JSON map of full type name to recursive fingerprint hash",
     )
 
     for lang in languages:
@@ -88,10 +101,37 @@ def main(
     if options.print_def:
         print(packages)
 
+    # Precompute recursive hashes once; emitters render them as constants.
+    type_map = {
+        t.full_name: t
+        for package in packages
+        for t in package.type_definitions.values()
+    }
+
+    # Cross-package hashes from upstream skymarshal invocations.
+    dep_hashes: T.Dict[str, int] = {}
+    for path in options.hash_deps_info or []:
+        with open(path) as f:
+            for full_name, hex_hash in json.load(f).items():
+                dep_hashes[full_name] = int(hex_hash, 16)
+
+    for t in type_map.values():
+        t.recursive_hash = t.compute_recursive_hash(type_map, dep_hashes)
+        # Enum emitters operate on enum.equivalent_struct; mirror the hash there.
+        equivalent_struct = getattr(t, "equivalent_struct", None)
+        if equivalent_struct is not None:
+            equivalent_struct.recursive_hash = t.recursive_hash
+
     files = {}
 
     for lang in languages:
         files.update(lang.create_files(packages, options))
+
+    if options.hash_info_out:
+        files[options.hash_info_out] = json.dumps(
+            {full_name: f"0x{t.recursive_hash:016x}" for full_name, t in sorted(type_map.items())},
+            indent=2,
+        )
 
     # Write any generated files that have changed.
     for filename, content in files.items():

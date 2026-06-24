@@ -111,8 +111,7 @@ class Vector6d : public Eigen::Matrix<double, 6, 1, Eigen::DontAlign> {
   inline __lcm_buffer_size _decodeNoHash(const void* buf, __lcm_buffer_size offset,
                                          __lcm_buffer_size maxlen);
   constexpr static uint64_t _computeHash(const __lcm_hash_ptr*) {
-    uint64_t hash = 0x7e2b2f4ef42123f4LL;
-    return (hash << 1) + ((hash >> 63) & 1);
+    return 0xfc565e9de84247e8ULL;
   }
 };
 

@@ -104,12 +104,7 @@ class d_t
             for(fp = p; fp != NULL; fp = fp->parent)
                 if(fp->v == d_t::getHash)
                     return 0;
-            const __lcm_hash_ptr cp = { p, d_t::getHash };
-
-            uint64_t hash = 0x21f0a3980ff1bd27LL +
-                ::eigen_lcm::Vector2d::_computeHash(&cp);
-
-            return (hash<<1) + ((hash>>63)&1);
+            return 0x3c8e046bf0680a0eULL;
         }
 
         // Comparison operators.

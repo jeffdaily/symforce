@@ -83,6 +83,10 @@ class StructBuilder(BaseBuilder):
     def hash(self):
         return self.struct.compute_hash()
 
+    @property
+    def recursive_hash(self) -> int:
+        return self.struct.recursive_hash
+
 
 class EnumBuilder(BaseBuilder):
     """Helper class for converting a 'lcm' enum into a destination code file."""
@@ -97,6 +101,10 @@ class EnumBuilder(BaseBuilder):
     @property
     def hash(self):
         return self.enum.compute_hash()
+
+    @property
+    def recursive_hash(self) -> int:
+        return self.enum.recursive_hash
 
     # TODO(matt): There are probably more shared methods and common patterns.
 

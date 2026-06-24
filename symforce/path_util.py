@@ -67,6 +67,29 @@ def symforce_root() -> Path:
     return Path(__file__).parent.parent
 
 
+def eigen_lcm_lcmtypes_dir() -> T.Optional[Path]:
+    """
+    Directory of the eigen_lcm ``.lcm`` sources, or ``None`` if not found.
+
+    Codegen feeds these to skymarshal's recursive-hash precompute. Standalone builds keep them under
+    ``third_party/eigen_lcm``; Bazel sets ``SYMFORCE_EIGEN_LCM_LCMTYPES_DIR`` (absolute, or relative
+    to the runfiles tree) to point elsewhere.
+    """
+    override = os.environ.get("SYMFORCE_EIGEN_LCM_LCMTYPES_DIR")
+    if override:
+        candidates = [Path(override)]
+        runfiles_dir = os.environ.get("RUNFILES_DIR") or os.environ.get("TEST_SRCDIR")
+        if runfiles_dir and not os.path.isabs(override):
+            candidates.append(Path(runfiles_dir) / "_main" / override)
+            candidates.append(Path(runfiles_dir) / override)
+        for candidate in candidates:
+            if candidate.is_dir():
+                return candidate
+
+    candidate = symforce_root() / "third_party" / "eigen_lcm" / "lcmtypes"
+    return candidate if candidate.is_dir() else None
+
+
 def symforce_data_root(test_file_path: T.Optional[str]) -> Path:
     """
     The root directory of the symforce project, for use accessing data that might need to be updated

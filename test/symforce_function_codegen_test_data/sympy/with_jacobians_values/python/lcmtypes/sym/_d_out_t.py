@@ -96,9 +96,7 @@ class d_out_t(object):
     @staticmethod
     def _get_hash_recursive(parents: T.List[T.Type]) -> int:
         if d_out_t in parents: return 0
-        tmphash = (0xd259512e30b44885) & 0xffffffffffffffff
-        tmphash = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
-        return tmphash
+        return 0xa4b2a25c6168910b
 
     _packed_fingerprint: T.Optional[bytes] = None
 

@@ -122,15 +122,7 @@ class outputs_1_t
             for(fp = p; fp != NULL; fp = fp->parent)
                 if(fp->v == outputs_1_t::getHash)
                     return 0;
-            const __lcm_hash_ptr cp = { p, outputs_1_t::getHash };
-
-            uint64_t hash = 0xa7f6beb7efb65a6fLL +
-                ::codegen_multi_function_test::values_vec_t::_computeHash(&cp) +
-         ::codegen_multi_function_test::values_vec_t::_computeHash(&cp) +
-         ::eigen_lcm::MatrixXd::_computeHash(&cp) +
-         ::eigen_lcm::Matrix4d::_computeHash(&cp);
-
-            return (hash<<1) + ((hash>>63)&1);
+            return 0x2a8087805634c5b0ULL;
         }
 
         // Comparison operators.

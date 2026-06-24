@@ -211,6 +211,7 @@ else()
   add_skymarshal_bindings(symforce_lcmtypes
     ${CMAKE_CURRENT_BINARY_DIR}/lcmtypes
     ${CMAKE_CURRENT_SOURCE_DIR}/lcmtypes
+    DEP_LCMTYPES_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/third_party/eigen_lcm/lcmtypes
   )
 
   target_include_directories(symforce_lcmtypes_cpp

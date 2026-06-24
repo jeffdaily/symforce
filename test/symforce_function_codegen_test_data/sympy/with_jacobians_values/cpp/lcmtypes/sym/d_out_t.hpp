@@ -96,8 +96,7 @@ class d_out_t
         inline __lcm_buffer_size _decodeNoHash(const void *buf, __lcm_buffer_size offset, __lcm_buffer_size maxlen);
         constexpr static uint64_t _computeHash(const __lcm_hash_ptr *)
         {
-            uint64_t hash = 0xd259512e30b44885LL;
-            return (hash<<1) + ((hash>>63)&1);
+            return 0xa4b2a25c6168910bULL;
         }
 
         // Comparison operators.

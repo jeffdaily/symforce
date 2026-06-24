@@ -101,12 +101,7 @@ class my_dataclass_t
             for(fp = p; fp != NULL; fp = fp->parent)
                 if(fp->v == my_dataclass_t::getHash)
                     return 0;
-            const __lcm_hash_ptr cp = { p, my_dataclass_t::getHash };
-
-            uint64_t hash = 0x34567803726f7424LL +
-                ::eigen_lcm::Vector4d::_computeHash(&cp);
-
-            return (hash<<1) + ((hash>>63)&1);
+            return 0x6159ad42b5637810ULL;
         }
 
         // Comparison operators.

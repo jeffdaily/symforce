@@ -111,8 +111,7 @@ class Vector7i : public Eigen::Matrix<int32_t, 7, 1, Eigen::DontAlign> {
   inline __lcm_buffer_size _decodeNoHash(const void* buf, __lcm_buffer_size offset,
                                          __lcm_buffer_size maxlen);
   constexpr static uint64_t _computeHash(const __lcm_hash_ptr*) {
-    uint64_t hash = 0xfbf54881202cbe30LL;
-    return (hash << 1) + ((hash >> 63) & 1);
+    return 0xf7ea910240597c61ULL;
   }
 };
 

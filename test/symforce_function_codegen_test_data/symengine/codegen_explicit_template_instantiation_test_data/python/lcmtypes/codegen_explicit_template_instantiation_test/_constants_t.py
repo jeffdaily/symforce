@@ -91,9 +91,7 @@ class constants_t(object):
     @staticmethod
     def _get_hash_recursive(parents: T.List[T.Type]) -> int:
         if constants_t in parents: return 0
-        tmphash = (0x152f505c823f2cbc) & 0xffffffffffffffff
-        tmphash = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
-        return tmphash
+        return 0x2a5ea0b9047e5978
 
     _packed_fingerprint: T.Optional[bytes] = None
 

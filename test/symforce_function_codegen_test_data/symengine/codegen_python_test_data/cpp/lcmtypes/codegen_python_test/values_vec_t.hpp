@@ -117,14 +117,7 @@ class values_vec_t
             for(fp = p; fp != NULL; fp = fp->parent)
                 if(fp->v == values_vec_t::getHash)
                     return 0;
-            const __lcm_hash_ptr cp = { p, values_vec_t::getHash };
-
-            uint64_t hash = 0xe7b60b55c8cf5417LL +
-                ::eigen_lcm::Vector4d::_computeHash(&cp) +
-         ::eigen_lcm::Vector4d::_computeHash(&cp) +
-         ::eigen_lcm::Vector4d::_computeHash(&cp);
-
-            return (hash<<1) + ((hash>>63)&1);
+            return 0xb9724e5f032c5787ULL;
         }
 
         // Comparison operators.

@@ -96,10 +96,7 @@ class states_t(object):
     @staticmethod
     def _get_hash_recursive(parents: T.List[T.Type]) -> int:
         if states_t in parents: return 0
-        newparents = parents + [states_t]
-        tmphash = (0x12345678017000+ Vector2d._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
-        return tmphash
+        return 0xf8d125e8c0876fc1
 
     _packed_fingerprint: T.Optional[bytes] = None
 

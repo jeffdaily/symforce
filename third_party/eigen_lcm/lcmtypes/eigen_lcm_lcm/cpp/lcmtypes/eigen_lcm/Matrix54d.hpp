@@ -111,8 +111,7 @@ class Matrix54d : public Eigen::Matrix<double, 5, 4, Eigen::DontAlign> {
   inline __lcm_buffer_size _decodeNoHash(const void* buf, __lcm_buffer_size offset,
                                          __lcm_buffer_size maxlen);
   constexpr static uint64_t _computeHash(const __lcm_hash_ptr*) {
-    uint64_t hash = 0x2b2f4ef42124f12cLL;
-    return (hash << 1) + ((hash >> 63) & 1);
+    return 0xb8f0546dd5ea48beULL;
   }
 };
 
