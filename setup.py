@@ -184,6 +184,19 @@ class CMakeBuild(build_ext):
                 str(build_temp_path / "lcmtypes" / "python2.7" / "lcmtypes"),
                 str(dest_path),
             )
+
+            # NOTE(aaron): Codegen's recursive-hash precompute needs the eigen_lcm .lcm sources to
+            # resolve cross-package types (e.g. eigen_lcm.Vector2d).  Wheels don't ship third_party,
+            # so copy those sources to the same third_party/eigen_lcm/lcmtypes path (relative to the
+            # install root) where path_util.eigen_lcm_lcmtypes_dir looks for them.  Editable installs
+            # already have them in the source tree and skip this.
+            if not self.inplace:
+                eigen_lcm_src = SOURCE_DIR / "third_party" / "eigen_lcm" / "lcmtypes"
+                eigen_lcm_dest = dest_path_dir / "third_party" / "eigen_lcm" / "lcmtypes"
+                self.mkpath(str(eigen_lcm_dest))
+                for lcm_file in eigen_lcm_src.glob("*.lcm"):
+                    self.copy_file(str(lcm_file), str(eigen_lcm_dest / lcm_file.name))
+
             return
 
         build_temp = Path(self.build_temp).resolve()
