@@ -187,7 +187,7 @@ pexpect==4.9.0
     # via ipython
 pillow==12.2.0
     # via matplotlib
-pip==26.1
+pip==26.1.2
     # via symforce (pyproject.toml)
 platformdirs==4.5.1
     # via jupyter-core
