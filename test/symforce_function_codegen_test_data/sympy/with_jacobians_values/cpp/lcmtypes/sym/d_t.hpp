@@ -230,7 +230,7 @@ __lcm_buffer_size d_t::decode(const void *buf, __lcm_buffer_size offset, __lcm_b
 {
     __lcm_buffer_size pos = 0, thislen;
 
-    uint64_t hash;
+    uint64_t hash = 0;
     thislen = __uint64_t_decode_array(buf, offset + pos, maxlen - pos, &hash, 1);
     if (thislen < 0) return thislen; else pos += thislen;
     if (hash != getHash()) return -1;
