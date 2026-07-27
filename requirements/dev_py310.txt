@@ -241,7 +241,7 @@ ruff==0.9.10
     # via symforce (pyproject.toml)
 scipy==1.15.3
     # via symforce (pyproject.toml)
-setuptools==82.0.0
+setuptools==83.0.0
     # via
     #   symforce (pyproject.toml)
     #   setuptools-scm
@@ -323,7 +323,7 @@ types-markupsafe==1.1.10
     # via types-jinja2
 types-requests==2.32.4.20260107
     # via symforce (pyproject.toml)
-types-setuptools==82.0.0.20260210
+types-setuptools==83.0.0.20260724
     # via symforce (pyproject.toml)
 typing-extensions==4.15.0
     # via

@@ -259,6 +259,10 @@ class InstallWithExtras(install):
         assert isinstance(build_ext_obj, CMakeBuild)
         build_dir = Path(build_ext_obj.build_temp)
 
+        # NOTE: types-setuptools>=83 types install_platlib as `str | None`; it is populated by
+        # super().run() above, so narrow it to str for the path arithmetic below.
+        assert self.install_platlib is not None
+
         # Install symengine
         # NOTE(aaron): We add symenginepy as a package down below, and the only remaining thing we
         # need is the compiled symengine_wrapper.so, which we move into place here.  This doesn't
