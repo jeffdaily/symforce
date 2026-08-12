@@ -348,6 +348,7 @@ __forceinline__ __device__ void FlushSumBlock(StorageT* const output, StorageT* 
   for (int i = threadIdx.x; i < dim_target; i += blockDim.x) {
     output[blockIdx.x * dim_aligned + i] = inout_shared[i];
   }
+  __syncthreads();
 #else
   const cg::coalesced_group group = cg::binary_partition(cg::coalesced_threads(), valid);
   constexpr uint dim_aligned = dim_target == 3 ? 4 : dim_target;
@@ -372,6 +373,7 @@ __forceinline__ __device__ void FlushSumBlock(StorageT* const output, StorageT* 
   for (int i = threadIdx.x; i < dim_target; i += blockDim.x) {
     output[blockIdx.x * dim_aligned + i] = inout_shared[i];
   }
+  __syncthreads();
 #endif
 }
 template <typename StorageT>
@@ -406,6 +408,7 @@ __forceinline__ __device__ void SumStore(StorageT* const shared_tmp, StorageT* c
       shared_tmp[offset] = tot;
     }
   }
+  __syncthreads();
 }
 
 template <typename StorageT>
@@ -448,6 +451,7 @@ __forceinline__ __device__ void FlushSumBlockAdd(StorageT* const output,
   for (int i = threadIdx.x; i < dim_target; i += blockDim.x) {
     output[blockIdx.x * dim_aligned + i] += inout_shared[i];
   }
+  __syncthreads();
 #else
   const cg::coalesced_group group = cg::binary_partition(cg::coalesced_threads(), valid);
   constexpr uint dim_aligned = dim_target == 3 ? 4 : dim_target;
@@ -472,6 +476,7 @@ __forceinline__ __device__ void FlushSumBlockAdd(StorageT* const output,
   for (int i = threadIdx.x; i < dim_target; i += blockDim.x) {
     output[blockIdx.x * dim_aligned + i] += inout_shared[i];
   }
+  __syncthreads();
 #endif
 }
 
