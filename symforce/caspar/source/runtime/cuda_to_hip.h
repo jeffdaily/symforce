@@ -33,6 +33,7 @@
 #define cudaGetErrorString      hipGetErrorString
 #define cudaSetDevice           hipSetDevice
 #define cudaGetDevice           hipGetDevice
+#define cudaGetDeviceCount      hipGetDeviceCount
 #define cudaPointerGetAttributes hipPointerGetAttributes
 #define cudaPointerAttributes   hipPointerAttribute_t
 
