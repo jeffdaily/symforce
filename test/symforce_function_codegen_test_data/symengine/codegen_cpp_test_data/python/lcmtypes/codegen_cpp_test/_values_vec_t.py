@@ -121,7 +121,7 @@ class values_vec_t(object):
             # NOTE(eric): mypy isn't able to figure out the hasattr check
             buf = T.cast(T.BinaryIO, data)
         else:
-            buf = BytesIO(T.cast(bytes, data))
+            buf = BytesIO(data)
 
         if buf.read(8) != values_vec_t._get_packed_fingerprint():
             raise ValueError("Decode error")

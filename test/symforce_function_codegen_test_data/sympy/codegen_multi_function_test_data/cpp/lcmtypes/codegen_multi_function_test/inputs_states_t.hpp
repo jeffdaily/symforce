@@ -101,12 +101,7 @@ class inputs_states_t
             for(fp = p; fp != NULL; fp = fp->parent)
                 if(fp->v == inputs_states_t::getHash)
                     return 0;
-            const __lcm_hash_ptr cp = { p, inputs_states_t::getHash };
-
-            uint64_t hash = 0x0012345678017000LL +
-                ::eigen_lcm::Vector2d::_computeHash(&cp);
-
-            return (hash<<1) + ((hash>>63)&1);
+            return 0xf8d125e8c0876fc1ULL;
         }
 
         // Comparison operators.
@@ -217,7 +212,7 @@ __lcm_buffer_size inputs_states_t::decode(const void *buf, __lcm_buffer_size off
 {
     __lcm_buffer_size pos = 0, thislen;
 
-    uint64_t hash;
+    uint64_t hash = 0;
     thislen = __uint64_t_decode_array(buf, offset + pos, maxlen - pos, &hash, 1);
     if (thislen < 0) return thislen; else pos += thislen;
     if (hash != getHash()) return -1;

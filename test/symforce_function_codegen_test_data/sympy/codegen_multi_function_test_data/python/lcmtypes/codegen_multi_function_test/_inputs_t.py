@@ -189,7 +189,7 @@ class inputs_t(object):
             # NOTE(eric): mypy isn't able to figure out the hasattr check
             buf = T.cast(T.BinaryIO, data)
         else:
-            buf = BytesIO(T.cast(bytes, data))
+            buf = BytesIO(data)
 
         if buf.read(8) != inputs_t._get_packed_fingerprint():
             raise ValueError("Decode error")
@@ -226,10 +226,7 @@ class inputs_t(object):
     @staticmethod
     def _get_hash_recursive(parents: T.List[T.Type]) -> int:
         if inputs_t in parents: return 0
-        newparents = parents + [inputs_t]
-        tmphash = (0x57fdecbc3532ce7f+ Vector4d._get_hash_recursive(newparents)+ Vector4d._get_hash_recursive(newparents)+ Vector4d._get_hash_recursive(newparents)+ values_vec_t._get_hash_recursive(newparents)+ values_vec_t._get_hash_recursive(newparents)+ inputs_constants_t._get_hash_recursive(newparents)+ MatrixXd._get_hash_recursive(newparents)+ Matrix4d._get_hash_recursive(newparents)+ inputs_states_t._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
-        return tmphash
+        return 0xbaf4a87fdcc6ef9b
 
     _packed_fingerprint: T.Optional[bytes] = None
 
