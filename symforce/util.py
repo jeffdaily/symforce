@@ -39,6 +39,7 @@ def lambdify(
     expr: T.Element | T.Sequence[T.Element] | None = None,
     *,
     use_numba: bool = False,
+    dep_hash_files: T.Optional[T.Sequence[T.Openable]] = None,
 ) -> T.Callable:
     """
     Convert a symbolic function, or expression(s), to a numerical function.
@@ -90,12 +91,14 @@ def lambdify(
             inputs=inputs, outputs=outputs, config=codegen.PythonConfig(use_numba=use_numba)
         )
 
-    return codegen_obj.lambdify()
+    return codegen_obj.lambdify(dep_hash_files=dep_hash_files)
 
 
 def numbify(
     f_or_args: T.Callable | T.Sequence[T.Element],
     expr: T.Element | T.Sequence[T.Element] | None = None,
+    *,
+    dep_hash_files: T.Optional[T.Sequence[T.Openable]] = None,
 ) -> T.Callable:
     """
     Shorthand for ``lambdify(..., use_numba=True)``
@@ -103,7 +106,7 @@ def numbify(
     See Also:
         :func:`lambdify`
     """
-    return lambdify(f_or_args, expr, use_numba=True)
+    return lambdify(f_or_args, expr, use_numba=True, dep_hash_files=dep_hash_files)
 
 
 SymbolicFunction = T.TypeVar("SymbolicFunction", bound=T.Callable)

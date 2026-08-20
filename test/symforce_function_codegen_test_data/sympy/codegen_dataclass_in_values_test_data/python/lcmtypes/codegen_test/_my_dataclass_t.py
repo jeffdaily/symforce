@@ -81,7 +81,7 @@ class my_dataclass_t(object):
             # NOTE(eric): mypy isn't able to figure out the hasattr check
             buf = T.cast(T.BinaryIO, data)
         else:
-            buf = BytesIO(T.cast(bytes, data))
+            buf = BytesIO(data)
 
         if buf.read(8) != my_dataclass_t._get_packed_fingerprint():
             raise ValueError("Decode error")
@@ -96,10 +96,7 @@ class my_dataclass_t(object):
     @staticmethod
     def _get_hash_recursive(parents: T.List[T.Type]) -> int:
         if my_dataclass_t in parents: return 0
-        newparents = parents + [my_dataclass_t]
-        tmphash = (0x34567803726f7424+ Vector4d._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
-        return tmphash
+        return 0x6159ad42b5637810
 
     _packed_fingerprint: T.Optional[bytes] = None
 

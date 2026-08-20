@@ -13,7 +13,9 @@ import dataclasses
 import importlib.abc
 import importlib.util
 import itertools
+import os
 import sys
+import tempfile
 from pathlib import Path
 
 import sympy
@@ -22,6 +24,7 @@ import symforce
 import symforce.symbolic as sf
 from symforce import _sympy_count_ops
 from symforce import ops
+from symforce import path_util
 from symforce import typing as T
 from symforce import typing_util
 from symforce.codegen import codegen_config
@@ -721,6 +724,7 @@ def generate_lcm_types(
     lcm_type_dir: T.Openable,
     lcm_files: T.Sequence[str],
     lcm_output_dir: T.Optional[T.Openable] = None,
+    dep_hash_files: T.Optional[T.Sequence[T.Openable]] = None,
 ) -> LcmBindingsDirs:
     """
     Generates the language-specific type files for all symforce generated ".lcm" files.
@@ -728,6 +732,8 @@ def generate_lcm_types(
     Args:
         lcm_type_dir: Directory containing symforce-generated .lcm files
         lcm_files: List of .lcm files to process
+        dep_hash_files: skymarshal --hash-info-out JSONs for cross-package types referenced by
+            the generated .lcm (e.g. eigen_lcm). Needed when referencing types outside lcm_type_dir.
     """
     lcm_type_dir = Path(lcm_type_dir)
 
@@ -751,9 +757,22 @@ def generate_lcm_types(
     from skymarshal.emit_cpp import SkymarshalCpp
     from skymarshal.emit_python import SkymarshalPython
 
-    skymarshal.main(
-        [SkymarshalPython, SkymarshalCpp],
-        args=[
+    with tempfile.TemporaryDirectory() as hash_tmp_dir:
+        dep_hash_paths = [str(p) for p in dep_hash_files] if dep_hash_files else []
+
+        # Generated lcm references eigen_lcm types we don't emit; supply their hashes when the
+        # sources are locatable so callers don't have to. (Under Bazel callers pass them instead.)
+        eigen_lcm_dir = path_util.eigen_lcm_lcmtypes_dir()
+        if eigen_lcm_dir is not None:
+            eigen_lcm_hashes = os.path.join(hash_tmp_dir, "eigen_lcm_hashes.json")
+            skymarshal.main(
+                [],
+                args=[str(eigen_lcm_dir), "--hash-info-out", eigen_lcm_hashes, "--no-source-paths"],
+                print_generated=False,
+            )
+            dep_hash_paths.append(eigen_lcm_hashes)
+
+        args = [
             str(lcm_type_dir),
             "--python",
             "--python-path",
@@ -767,9 +786,16 @@ def generate_lcm_types(
             "--cpp-include",
             lcm_include_dir,
             "--no-source-paths",
-        ],
-        print_generated=False,
-    )
+        ]
+        if dep_hash_paths:
+            args.append("--hash-deps-info")
+            args.extend(dep_hash_paths)
+
+        skymarshal.main(
+            [SkymarshalPython, SkymarshalCpp],
+            args=args,
+            print_generated=False,
+        )
 
     # Autoformat generated python files
     for f in python_types_dir.rglob("*.py"):

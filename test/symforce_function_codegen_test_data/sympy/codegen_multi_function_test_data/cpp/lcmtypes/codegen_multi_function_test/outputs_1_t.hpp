@@ -122,15 +122,7 @@ class outputs_1_t
             for(fp = p; fp != NULL; fp = fp->parent)
                 if(fp->v == outputs_1_t::getHash)
                     return 0;
-            const __lcm_hash_ptr cp = { p, outputs_1_t::getHash };
-
-            uint64_t hash = 0xa7f6beb7efb65a6fLL +
-                ::codegen_multi_function_test::values_vec_t::_computeHash(&cp) +
-         ::codegen_multi_function_test::values_vec_t::_computeHash(&cp) +
-         ::eigen_lcm::MatrixXd::_computeHash(&cp) +
-         ::eigen_lcm::Matrix4d::_computeHash(&cp);
-
-            return (hash<<1) + ((hash>>63)&1);
+            return 0x2a8087805634c5b0ULL;
         }
 
         // Comparison operators.
@@ -331,7 +323,7 @@ __lcm_buffer_size outputs_1_t::decode(const void *buf, __lcm_buffer_size offset,
 {
     __lcm_buffer_size pos = 0, thislen;
 
-    uint64_t hash;
+    uint64_t hash = 0;
     thislen = __uint64_t_decode_array(buf, offset + pos, maxlen - pos, &hash, 1);
     if (thislen < 0) return thislen; else pos += thislen;
     if (hash != getHash()) return -1;

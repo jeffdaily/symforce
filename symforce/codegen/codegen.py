@@ -456,6 +456,7 @@ class Codegen:
         namespace: str = "sym",
         generated_file_name: T.Optional[str] = None,
         skip_directory_nesting: bool = False,
+        dep_hash_files: T.Optional[T.Sequence[T.Openable]] = None,
     ) -> GeneratedPaths:
         """
         Generates a function that computes the given outputs from the given inputs.
@@ -546,6 +547,7 @@ class Codegen:
             output_dir=os.fspath(output_dir),
             lcm_bindings_output_dir=os.fspath(lcm_bindings_output_dir),
             templates=templates,
+            dep_hash_files=dep_hash_files,
         )
 
         # Maps typenames to generated types
@@ -587,6 +589,7 @@ class Codegen:
             lcm_type_dir=types_codegen_data.lcm_type_dir,
             lcm_files=types_codegen_data.lcm_files,
             lcm_output_dir=types_codegen_data.lcm_bindings_output_dir,
+            dep_hash_files=dep_hash_files,
         )
 
         return GeneratedPaths(
@@ -946,13 +949,17 @@ class Codegen:
             docstring="\n".join(docstring_lines),
         )
 
-    def lambdify(self) -> T.Callable:
+    def lambdify(
+        self,
+        dep_hash_files: T.Optional[T.Sequence[T.Openable]] = None,
+    ) -> T.Callable:
         """
         Generates a numerical function from an existing codegen object. Wraps codegen
         generate function and load function methods.
 
         Args:
             self: Existing codegen object with a PythonConfig
+            dep_hash_files: See :meth:`Codegen.generate_function`.
 
         Returns:
             A numerical function generated from the codegen object
@@ -968,7 +975,7 @@ class Codegen:
             self.name = "_lambda"
             name_was_none = True
 
-        data = self.generate_function(namespace="_lambda")
+        data = self.generate_function(namespace="_lambda", dep_hash_files=dep_hash_files)
         generated_function = codegen_util.load_generated_function(
             self.name, data.function_dir, evict=not self.config.use_numba
         )

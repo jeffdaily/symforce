@@ -20,7 +20,6 @@ enum option_t {
 {# -- Generate true lcm decoder -- #}
 export class {{enum_type.name}} extends LcmEnumMsg {
   public static override option_t = option_t;
-  private static _hash = Long.fromString("{{enum_type.hash.int_value}}", true);
   private static _packed_fingerprint?: Long;
 
   /** @internal */
@@ -36,9 +35,7 @@ export class {{enum_type.name}} extends LcmEnumMsg {
     if (parents.indexOf({{enum_type.name}}) > -1) {
       return Long.fromNumber(0, true);
     }
-    let tmp_hash = {{enum_type.name}}._hash;
-    tmp_hash = tmp_hash.shl(1).add(tmp_hash.shru(63));
-    return tmp_hash;
+    return Long.fromString("{{enum_type.recursive_hash}}", true);
   }
 
   public override decode(array: Uint8Array): {{enum_type.name}} {

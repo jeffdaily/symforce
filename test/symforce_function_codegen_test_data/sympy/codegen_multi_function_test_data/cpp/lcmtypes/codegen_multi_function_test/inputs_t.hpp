@@ -140,20 +140,7 @@ class inputs_t
             for(fp = p; fp != NULL; fp = fp->parent)
                 if(fp->v == inputs_t::getHash)
                     return 0;
-            const __lcm_hash_ptr cp = { p, inputs_t::getHash };
-
-            uint64_t hash = 0x57fdecbc3532ce7fLL +
-                ::eigen_lcm::Vector4d::_computeHash(&cp) +
-         ::eigen_lcm::Vector4d::_computeHash(&cp) +
-         ::eigen_lcm::Vector4d::_computeHash(&cp) +
-         ::codegen_multi_function_test::values_vec_t::_computeHash(&cp) +
-         ::codegen_multi_function_test::values_vec_t::_computeHash(&cp) +
-         ::codegen_multi_function_test::inputs_constants_t::_computeHash(&cp) +
-         ::eigen_lcm::MatrixXd::_computeHash(&cp) +
-         ::eigen_lcm::Matrix4d::_computeHash(&cp) +
-         ::codegen_multi_function_test::inputs_states_t::_computeHash(&cp);
-
-            return (hash<<1) + ((hash>>63)&1);
+            return 0xbaf4a87fdcc6ef9bULL;
         }
 
         // Comparison operators.
@@ -429,7 +416,7 @@ __lcm_buffer_size inputs_t::decode(const void *buf, __lcm_buffer_size offset, __
 {
     __lcm_buffer_size pos = 0, thislen;
 
-    uint64_t hash;
+    uint64_t hash = 0;
     thislen = __uint64_t_decode_array(buf, offset + pos, maxlen - pos, &hash, 1);
     if (thislen < 0) return thislen; else pos += thislen;
     if (hash != getHash()) return -1;
