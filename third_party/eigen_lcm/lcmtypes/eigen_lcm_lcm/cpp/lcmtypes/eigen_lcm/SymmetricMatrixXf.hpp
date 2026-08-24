@@ -111,8 +111,7 @@ class SymmetricMatrixXf
   inline __lcm_buffer_size _decodeNoHash(const void* buf, __lcm_buffer_size offset,
                                          __lcm_buffer_size maxlen);
   constexpr static uint64_t _computeHash(const __lcm_hash_ptr*) {
-    uint64_t hash = 0x8151d60c7c2a63eeLL;
-    return (hash << 1) + ((hash >> 63) & 1);
+    return 0x2a3ac18f854c7ddULL;
   }
 };
 
@@ -142,7 +141,7 @@ __lcm_buffer_size SymmetricMatrixXf::decode(const void* buf, __lcm_buffer_size o
                                             __lcm_buffer_size maxlen) {
   __lcm_buffer_size pos = 0, thislen;
 
-  uint64_t hash;
+  uint64_t hash = 0;
   thislen = __uint64_t_decode_array(buf, offset + pos, maxlen - pos, &hash, 1);
   if (thislen < 0) {
     return thislen;

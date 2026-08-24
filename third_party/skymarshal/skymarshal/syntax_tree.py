@@ -336,6 +336,8 @@ class Enum(AstNode):
         self.notations = list(notations)
         self.reserved_ids = set(reserved_ids)
         self.source_file: T.Optional[str] = None
+        # Populated by skymarshal.main after cross-package hashes are loaded.
+        self.recursive_hash: int = 0
 
     def set_source_file(self, source_file: str) -> None:
         self.source_file = source_file
@@ -419,6 +421,14 @@ class Enum(AstNode):
     def compute_hash(self) -> Hash:
         return self.equivalent_struct.compute_hash()
 
+    def compute_recursive_hash(
+        self,
+        type_map: T.Mapping[str, T.Union[Struct, Enum]],
+        dep_hashes: T.Mapping[str, int],
+        parents: T.Optional[T.List[Struct]] = None,
+    ) -> int:
+        return self.equivalent_struct.compute_recursive_hash(type_map, dep_hashes, parents)
+
 
 class EnumCase(AstNode):
     """A name/value case of an lcm enum type"""
@@ -467,6 +477,8 @@ class Struct(AstNode):
         self.type_ref = TypeRef(name)
         self.notations = list(notations)
         self.source_file: T.Optional[str] = None
+        # Populated by skymarshal.main after cross-package hashes are loaded.
+        self.recursive_hash: int = 0
 
     def set_source_file(self, source_file: str) -> None:
         self.source_file = source_file
@@ -604,6 +616,38 @@ class Struct(AstNode):
             if not isinstance(member, ConstMember):
                 member.compute_hash(type_hash)
         return type_hash
+
+    def compute_recursive_hash(
+        self,
+        type_map: T.Mapping[str, T.Union[Struct, Enum]],
+        dep_hashes: T.Mapping[str, int],
+        parents: T.Optional[T.List[Struct]] = None,
+    ) -> int:
+        """Recursively compute the lcm fingerprint hash including referenced types.
+
+        Cross-package types are resolved via dep_hashes from upstream skymarshal invocations.
+        """
+        if parents is None:
+            parents = []
+        if self in parents:
+            return 0
+        h = self.compute_hash().int_value
+        new_parents = parents + [self]
+        for member in self.members:
+            if isinstance(member, ConstMember):
+                continue
+            if member.type_ref.is_primitive_type():
+                continue
+            full_name = member.type_ref.full_name
+            sub = type_map.get(full_name)
+            if sub is not None:
+                sub_hash = sub.compute_recursive_hash(type_map, dep_hashes, new_parents)
+            elif full_name in dep_hashes:
+                sub_hash = dep_hashes[full_name]
+            else:
+                raise KeyError(f"compute_recursive_hash: cannot resolve {full_name}")
+            h = (h + sub_hash) & 0xFFFFFFFFFFFFFFFF
+        return ((h << 1) & 0xFFFFFFFFFFFFFFFF) | (h >> 63)
 
 
 class ReservedFieldGroup(AstNode):

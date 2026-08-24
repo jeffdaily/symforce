@@ -82,7 +82,11 @@ function(add_skymarshal_bindings target_name bindings_dir lcmtypes_dir)
     add_subdirectory(${CMAKE_CURRENT_FUNCTION_LIST_DIR}/.. EXCLUDE_FROM_ALL)
   endif()
 
-  cmake_parse_arguments(args "" "" "LANGUAGES" ${ARGN})
+  # DEP_LCMTYPES_DIRS: directories of .lcm files for cross-package types referenced by
+  # ${lcmtypes_dir} (e.g. eigen_lcm). Each is compiled to a hash JSON and threaded into
+  # this invocation via --hash-deps-info so skymarshal's recursive-hash precompute can
+  # resolve cross-package references without emitting code for them here.
+  cmake_parse_arguments(args "" "" "LANGUAGES;DEP_LCMTYPES_DIRS" ${ARGN})
   if(NOT args_LANGUAGES)
     set(args_LANGUAGES python cpp)
   endif()
@@ -111,10 +115,31 @@ function(add_skymarshal_bindings target_name bindings_dir lcmtypes_dir)
     endif()
   endforeach()
 
+  # Compile each dep dir to a hash JSON for cross-package fingerprint resolution.
+  set(dep_hash_files)
+  set(dep_hash_outputs)
+  foreach(dep_dir ${args_DEP_LCMTYPES_DIRS})
+    get_filename_component(dep_name ${dep_dir} NAME)
+    set(dep_hash_file ${bindings_dir}/${target_name}__${dep_name}__hash_info.json)
+    file(GLOB dep_lcm_sources CONFIGURE_DEPENDS ${dep_dir}/*.lcm)
+    add_custom_command(
+      OUTPUT ${dep_hash_file}
+      COMMAND ${SKYMARSHAL_PYTHON} -m skymarshal --hash-info-out ${dep_hash_file} -- ${dep_dir}
+      DEPENDS ${dep_lcm_sources}
+    )
+    list(APPEND dep_hash_files ${dep_hash_file})
+    list(APPEND dep_hash_outputs ${dep_hash_file})
+  endforeach()
+
+  if(dep_hash_files)
+    list(APPEND skymarshal_args --hash-deps-info ${dep_hash_files})
+  endif()
+
   file(GLOB lcm_sources CONFIGURE_DEPENDS ${lcmtypes_dir}/*.lcm)
+  # `--` terminates --hash-deps-info's nargs="*" capture so the source_path positional resolves.
   add_custom_command(
     OUTPUT ${outputs}
-    COMMAND ${SKYMARSHAL_PYTHON} -m skymarshal ${skymarshal_args} ${lcmtypes_dir}
-    DEPENDS ${lcm_sources}
+    COMMAND ${SKYMARSHAL_PYTHON} -m skymarshal ${skymarshal_args} -- ${lcmtypes_dir}
+    DEPENDS ${lcm_sources} ${dep_hash_outputs}
   )
 endfunction()

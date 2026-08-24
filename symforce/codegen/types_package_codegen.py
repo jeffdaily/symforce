@@ -53,6 +53,7 @@ def generate_types(
     output_dir: T.Optional[T.Openable] = None,
     lcm_bindings_output_dir: T.Optional[T.Openable] = None,
     templates: T.Optional[template_util.TemplateList] = None,
+    dep_hash_files: T.Optional[T.Sequence[T.Openable]] = None,
 ) -> TypesCodegenData:
     """
     Generates LCM types from the given values_indices, including the necessary subtypes
@@ -196,7 +197,7 @@ def generate_types(
     if not using_external_templates:
         templates.render()
         codegen_data.lcm_bindings_dirs = codegen_util.generate_lcm_types(
-            lcm_type_dir, lcm_files, lcm_bindings_output_dir
+            lcm_type_dir, lcm_files, lcm_bindings_output_dir, dep_hash_files=dep_hash_files
         )
 
     return codegen_data

@@ -276,7 +276,6 @@ import ReflectionMeta from "{{typescript_library_path}}/reflection";
 {# -- Define the lcm struct with decode methods -- #}
 export class {{struct_type.name}} extends LcmMsg {
 
-  private static _hash = Long.fromString("{{struct_type.hash.int_value}}", true);
   private static _packed_fingerprint?: Long;
 
   /** @internal */
@@ -292,14 +291,7 @@ export class {{struct_type.name}} extends LcmMsg {
     if (parents.indexOf({{struct_type.name}}) > -1) {
       return Long.fromNumber(0, true);
     }
-{% if struct_type.has_complex_members() %}
-    const new_parents = parents.concat([{{struct_type.name}}]);
-{% endif %}
-    let tmp_hash = {{struct_type.name}}._hash;
-{% for member in struct_type.complex_members() %}
-    tmp_hash = tmp_hash.add({{member.type_ref.name}}._get_hash_recursive(new_parents));
-{% endfor %}
-    return tmp_hash.shl(1).add(tmp_hash.shru(63));
+    return Long.fromString("{{struct_type.recursive_hash}}", true);
   }
 
   /** @internal */

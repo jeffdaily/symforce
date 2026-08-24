@@ -117,14 +117,7 @@ class values_vec_t
             for(fp = p; fp != NULL; fp = fp->parent)
                 if(fp->v == values_vec_t::getHash)
                     return 0;
-            const __lcm_hash_ptr cp = { p, values_vec_t::getHash };
-
-            uint64_t hash = 0xe7b60b55c8cf5417LL +
-                ::eigen_lcm::Vector4d::_computeHash(&cp) +
-         ::eigen_lcm::Vector4d::_computeHash(&cp) +
-         ::eigen_lcm::Vector4d::_computeHash(&cp);
-
-            return (hash<<1) + ((hash>>63)&1);
+            return 0xb9724e5f032c5787ULL;
         }
 
         // Comparison operators.
@@ -310,7 +303,7 @@ __lcm_buffer_size values_vec_t::decode(const void *buf, __lcm_buffer_size offset
 {
     __lcm_buffer_size pos = 0, thislen;
 
-    uint64_t hash;
+    uint64_t hash = 0;
     thislen = __uint64_t_decode_array(buf, offset + pos, maxlen - pos, &hash, 1);
     if (thislen < 0) return thislen; else pos += thislen;
     if (hash != getHash()) return -1;
